@@ -1,40 +1,47 @@
 # ram-weather-optimizer-tool
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python: 3.9+](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![React: 18+](https://img.shields.io/badge/React-18+-blue.svg)](https://reactjs.org/)
+Optimize Windows 11 Weather app RAM usage with this tool
 
 ## Executive Overview
-The ram-weather-optimizer-tool is a cutting-edge application designed to optimize Windows 11's built-in Weather app RAM usage. This tool features real-time metrics and interactive dashboards, providing users with a comprehensive overview of their system's performance. Built using FastAPI, Python, React, and Tailwind CSS, this application ensures a seamless and efficient user experience.
+The ram-weather-optimizer-tool is designed to help users optimize the RAM usage of the built-in Weather app in Windows 11. The tool consists of a FastAPI backend and a React frontend, allowing users to monitor and control the Weather app's RAM usage.
 
 ## Feature Breakdown
-* Real-time metrics and interactive dashboards
-* Optimization of Windows 11's built-in Weather app RAM usage
-* FastAPI backend with in-memory data store
-* React frontend with sleek dark mode theme and Lucide React icons
-* Dynamic interactive forms with real-time status indicators and system logs visualizer
+* Monitor Weather app RAM usage in real-time
+* Receive alerts when RAM usage exceeds a certain threshold
+* Optimize Weather app RAM usage with a single click
+* View detailed statistics on Weather app RAM usage
 
 ## API Contract Summary
-The FastAPI backend provides the following endpoints:
-* `POST /data`: Submit data to the in-memory data store
-* `GET /data`: Retrieve data from the in-memory data store
-* `POST /reset`: Reset the in-memory data store
+The FastAPI backend provides the following API endpoints:
+* `GET /ram-usage`: Returns the current RAM usage of the Weather app
+* `POST /optimize`: Optimizes the Weather app's RAM usage
+* `GET /stats`: Returns detailed statistics on Weather app RAM usage
+* `POST /reset`: Resets the in-memory data store
 
 ## End-to-End System Architecture Flow Diagram
 ```mermaid
 graph LR
-    A[User] -->|Interacts with| B[React Frontend]
-    B -->|Sends request to| C[FastAPI Backend]
-    C -->|Processes request| D[In-Memory Data Store]
-    D -->|Returns data to| C
-    C -->|Returns data to| B
-    B -->|Renders data to| A
-    C -->|CORS allows| E[Local Communication]
-    E -->|Enables| B
-    style A fill:#f9f,stroke:#333,stroke-width:4px
-    style B fill:#f9f,stroke:#333,stroke-width:4px
-    style C fill:#f9f,stroke:#333,stroke-width:4px
-    style D fill:#f9f,stroke:#333,stroke-width:4px
-    style E fill:#f9f,stroke:#333,stroke-width:4px
+    User -->|Interacts with| Frontend
+    Frontend -->|Sends request to| Backend
+    Backend -->|Processes request| InMemoryDataStore
+    InMemoryDataStore -->|Returns data to| Backend
+    Backend -->|Returns response to| Frontend
+    Frontend -->|Displays data to| User
+    subgraph FastAPI Backend
+        Backend -->|Optimizes RAM usage| WeatherApp
+        WeatherApp -->|Returns optimized RAM usage| Backend
+    end
+    subgraph React Frontend
+        Frontend -->|Renders UI components| User
+        User -->|Interacts with UI components| Frontend
+    end
+    subgraph In-Memory Data Store
+        InMemoryDataStore -->|Stores RAM usage data| Backend
+        Backend -->|Retrieves RAM usage data| InMemoryDataStore
+    end
+    subgraph Windows 11 Weather App
+        WeatherApp -->|Uses RAM| SystemResources
+        SystemResources -->|Provides RAM usage data| Backend
+    end
 ```
 
 ## Running the Application
@@ -43,15 +50,15 @@ graph LR
 2. Start the backend: `uvicorn backend.app:app --reload --port 8000`
 
 ### Frontend
-1. Navigate to the frontend directory: `cd frontend`
+1. Change into the frontend directory: `cd frontend`
 2. Install required packages: `npm install`
 3. Start the frontend: `npm run dev`
 
 ### CORS
-CORS (Cross-Origin Resource Sharing) allows the React frontend to communicate with the FastAPI backend, even though they are running on different ports. This enables seamless data exchange between the frontend and backend.
+The FastAPI backend is configured to allow CORS requests from the React frontend, allowing local communication between the two applications.
 
-## Contributing
-Contributions are welcome! Please submit a pull request with your changes and a brief description of what you've added or fixed.
-
-## License
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+## Badges
+[![Python version](https://img.shields.io/badge/Python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
+[![FastAPI version](https://img.shields.io/badge/FastAPI-0.92.0-blue.svg)](https://fastapi.tiangolo.com/)
+[![React version](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
+[![Vite version](https://img.shields.io/badge/Vite-3.1.0-blue.svg)](https://vitejs.dev/)

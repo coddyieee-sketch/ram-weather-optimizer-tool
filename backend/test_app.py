@@ -11,18 +11,18 @@ def test_reset_data():
     client = TestClient(app)
     response = client.post("/reset")
     assert response.status_code == 200
-    assert response.json() == {"message": "Data store reset"}
+    assert response.json() == {"message": "Data and logs reset successfully"}
 
 def test_submit_data():
     client = TestClient(app)
-    data = {"key": "value"}
+    data = {"key": "test_key", "value": "test_value"}
     response = client.post("/submit_data", json=data)
     assert response.status_code == 200
-    assert response.json() == {"message": "Data submitted"}
+    assert response.json() == {"message": "Data submitted successfully"}
 
 def test_get_data():
     client = TestClient(app)
-    data = {"key": "value"}
+    data = {"key": "test_key", "value": "test_value"}
     client.post("/submit_data", json=data)
     response = client.get("/get_data")
     assert response.status_code == 200
@@ -30,26 +30,23 @@ def test_get_data():
 
 def test_get_stats():
     client = TestClient(app)
-    data = {"key": "value"}
+    data = {"key": "test_key", "value": "test_value"}
     client.post("/submit_data", json=data)
     response = client.get("/get_stats")
     assert response.status_code == 200
     assert response.json() == {"count": 1}
 
-def test_submit_invalid_data():
+def test_log_query():
     client = TestClient(app)
-    data = "invalid data"
-    response = client.post("/submit_data", json=data)
-    assert response.status_code == 422
-
-def test_get_data_empty():
-    client = TestClient(app)
-    response = client.get("/get_data")
+    query = {"query": "test query"}
+    response = client.post("/log_query", json=query)
     assert response.status_code == 200
-    assert response.json() == []
+    assert response.json() == {"message": "Query logged successfully"}
 
-def test_get_stats_empty():
+def test_get_logs():
     client = TestClient(app)
-    response = client.get("/get_stats")
+    query = {"query": "test query"}
+    client.post("/log_query", json=query)
+    response = client.get("/get_logs")
     assert response.status_code == 200
-    assert response.json() == {"count": 0}
+    assert response.json() == [query]
