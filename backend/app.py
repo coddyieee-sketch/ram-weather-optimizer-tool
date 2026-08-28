@@ -22,7 +22,8 @@ app.add_middleware(
 )
 
 DATA_STORE = []
-LOGS = []
+LOG_QUERIES = []
+STATS = {"cache_hits": 0, "cache_misses": 0}
 
 class Data(BaseModel):
     key: str
@@ -31,31 +32,34 @@ class Data(BaseModel):
 class Query(BaseModel):
     query: str
 
+@app.post("/reset")
+async def reset_data():
+    global DATA_STORE, LOG_QUERIES, STATS
+    DATA_STORE = []
+    LOG_QUERIES = []
+    STATS = {"cache_hits": 0, "cache_misses": 0}
+    return {"message": "Data reset successfully"}
+
 @app.post("/submit_data")
 async def submit_data(data: Data):
+    global DATA_STORE
     DATA_STORE.append(data.dict())
     return {"message": "Data submitted successfully"}
 
 @app.get("/get_data")
 async def get_data():
+    global DATA_STORE
     return DATA_STORE
 
 @app.get("/get_stats")
 async def get_stats():
-    return {"count": len(DATA_STORE)}
+    global STATS
+    return STATS
 
 @app.post("/log_query")
 async def log_query(query: Query):
-    LOGS.append(query.dict())
+    global LOG_QUERIES
+    if not query.query:
+        raise HTTPException(status_code=422, detail="Query cannot be empty")
+    LOG_QUERIES.append(query.query)
     return {"message": "Query logged successfully"}
-
-@app.get("/get_logs")
-async def get_logs():
-    return LOGS
-
-@app.post("/reset")
-async def reset():
-    global DATA_STORE, LOGS
-    DATA_STORE = []
-    LOGS = []
-    return {"message": "Data and logs reset successfully"}

@@ -41,10 +41,10 @@ The FastAPI backend exposes the following API endpoints:
 
 # Frontend Component Architecture
 The React frontend is composed of the following components:
-- `App.js`: The main application component.
-- `Dashboard.js`: The dashboard component for displaying real-time system logs and metrics.
-- `Form.js`: The form component for submitting data to the backend.
-- `Visualizer.js`: The visualizer component for displaying custom metrics.
+- `App.jsx`: The main application component.
+- `Dashboard.jsx`: The dashboard component for displaying real-time system logs and metrics.
+- `Form.jsx`: The form component for submitting data to the backend.
+- `Visualizer.jsx`: The visualizer component for displaying custom metrics.
 
 # Automated Testing Setup
 The project utilizes Pytest for automated testing. The test suite includes tests for the following scenarios:

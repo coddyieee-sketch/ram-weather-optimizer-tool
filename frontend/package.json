@@ -2,7 +2,7 @@
   "name": "ram-weather-optimizer-tool",
   "version": "1.0.0",
   "description": "Optimize Windows 11 Weather app RAM usage with this tool",
-  "main": "main.jsx",
+  "main": "index.html",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
