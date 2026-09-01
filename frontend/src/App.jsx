@@ -1,70 +1,87 @@
 import React, { useState, useEffect } from 'react';
 import { FiSettings, FiMoon, FiSun } from 'lucide-react';
-import './App.css';
+import axios from 'axios';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [weatherData, setWeatherData] = useState({});
   const [ramUsage, setRamUsage] = useState(0);
-  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [systemLogs, setSystemLogs] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:8000/weather-data')
-      .then(response => response.json())
-      .then(data => setWeatherData(data));
+    axios.get('http://localhost:8000/weather-data')
+      .then(response => {
+        setWeatherData(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+
+    axios.get('http://localhost:8000/ram-usage')
+      .then(response => {
+        setRamUsage(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+
+    axios.get('http://localhost:8000/system-logs')
+      .then(response => {
+        setSystemLogs(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
   }, []);
 
-  useEffect(() => {
-    fetch('http://localhost:8000/ram-usage')
-      .then(response => response.json())
-      .then(data => setRamUsage(data.usage));
-  }, []);
-
-  const handleOptimize = () => {
-    setIsOptimizing(true);
-    fetch('http://localhost:8000/optimize-ram-usage', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({}),
-    })
-      .then(response => response.json())
-      .then(data => {
-        setRamUsage(data.usage);
-        setIsOptimizing(false);
+  const handleReset = () => {
+    axios.post('http://localhost:8000/reset')
+      .then(response => {
+        setWeatherData({});
+        setRamUsage(0);
+        setSystemLogs([]);
+      })
+      .catch(error => {
+        console.error(error);
       });
   };
 
-  const handleToggleDarkMode = () => {
+  const handleDarkModeToggle = () => {
     setDarkMode(!darkMode);
   };
 
   return (
-    <div className={`app ${darkMode ? 'dark' : ''}`}>
-      <header className="header">
-        <h1>RAM Weather Optimizer Tool</h1>
-        <button className="settings-button" onClick={handleToggleDarkMode}>
-          {darkMode ? <FiSun /> : <FiMoon />}
+    <div className={`h-screen w-screen ${darkMode ? 'bg-slate-900' : 'bg-white'}`}>
+      <header className="flex justify-between items-center p-4">
+        <h1 className="text-2xl font-bold">RAM Weather Optimizer Tool</h1>
+        <button className="p-2 rounded-full hover:bg-slate-200" onClick={handleDarkModeToggle}>
+          {darkMode ? <FiSun size={24} /> : <FiMoon size={24} />}
         </button>
       </header>
-      <main className="main">
-        <section className="weather-section">
-          <h2>Weather Data</h2>
+      <main className="p-4">
+        <section className="mb-4">
+          <h2 className="text-xl font-bold">Weather Data</h2>
           <ul>
             {Object.keys(weatherData).map(key => (
-              <li key={key}>
-                <span>{key}</span>
-                <span>{weatherData[key]}</span>
-              </li>
+              <li key={key}>{`${key}: ${weatherData[key]}`}</li>
             ))}
           </ul>
         </section>
-        <section className="ram-usage-section">
-          <h2>RAM Usage</h2>
-          <p>{ramUsage}%</p>
-          <button className="optimize-button" onClick={handleOptimize} disabled={isOptimizing}>
-            {isOptimizing ? 'Optimizing...' : 'Optimize RAM Usage'}
-          </button>
+        <section className="mb-4">
+          <h2 className="text-xl font-bold">RAM Usage</h2>
+          <p>{`RAM usage: ${ramUsage} MB`}</p>
         </section>
+        <section className="mb-4">
+          <h2 className="text-xl font-bold">System Logs</h2>
+          <ul>
+            {systemLogs.map(log => (
+              <li key={log}>{log}</li>
+            ))}
+          </ul>
+        </section>
+        <button className="p-2 rounded-full hover:bg-slate-200" onClick={handleReset}>
+          <FiSettings size={24} />
+        </button>
       </main>
     </div>
   );

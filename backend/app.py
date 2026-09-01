@@ -22,22 +22,18 @@ app.add_middleware(
 )
 
 DATA_STORE = []
-LOG_QUERIES = []
-STATS = {"cache_hits": 0, "cache_misses": 0}
+STATS_STORE = []
 
 class Data(BaseModel):
     key: str
     value: str
 
-class Query(BaseModel):
-    query: str
-
 @app.post("/reset")
 async def reset_data():
-    global DATA_STORE, LOG_QUERIES, STATS
+    global DATA_STORE
+    global STATS_STORE
     DATA_STORE = []
-    LOG_QUERIES = []
-    STATS = {"cache_hits": 0, "cache_misses": 0}
+    STATS_STORE = []
     return {"message": "Data reset successfully"}
 
 @app.post("/submit_data")
@@ -53,13 +49,11 @@ async def get_data():
 
 @app.get("/get_stats")
 async def get_stats():
-    global STATS
-    return STATS
+    global STATS_STORE
+    return STATS_STORE
 
-@app.post("/log_query")
-async def log_query(query: Query):
-    global LOG_QUERIES
-    if not query.query:
-        raise HTTPException(status_code=422, detail="Query cannot be empty")
-    LOG_QUERIES.append(query.query)
-    return {"message": "Query logged successfully"}
+@app.post("/submit_stats")
+async def submit_stats(data: Data):
+    global STATS_STORE
+    STATS_STORE.append(data.dict())
+    return {"message": "Stats submitted successfully"}

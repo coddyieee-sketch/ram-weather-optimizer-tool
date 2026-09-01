@@ -15,40 +15,37 @@ def test_reset_data():
 
 def test_submit_data():
     client = TestClient(app)
-    data = {"key": "some_key", "value": "some_value"}
-    response = client.post("/submit_data", json=data)
+    response = client.post("/submit_data", json={"key": "some_key", "value": "some_value"})
     assert response.status_code == 200
     assert response.json() == {"message": "Data submitted successfully"}
 
 def test_get_data():
     client = TestClient(app)
-    data = {"key": "some_key", "value": "some_value"}
-    client.post("/submit_data", json=data)
+    client.post("/submit_data", json={"key": "some_key", "value": "some_value"})
     response = client.get("/get_data")
     assert response.status_code == 200
-    assert response.json() == [data]
+    assert response.json() == [{"key": "some_key", "value": "some_value"}]
 
 def test_get_stats():
     client = TestClient(app)
+    client.post("/submit_stats", json={"key": "some_key", "value": "some_value"})
     response = client.get("/get_stats")
     assert response.status_code == 200
-    assert response.json() == {"cache_hits": 0, "cache_misses": 0}
+    assert response.json() == [{"key": "some_key", "value": "some_value"}]
 
-def test_log_query():
+def test_submit_invalid_data():
     client = TestClient(app)
-    query = {"query": "test query"}
-    response = client.post("/log_query", json=query)
+    response = client.post("/submit_data", json={"invalid": "data"})
+    assert response.status_code == 422
+
+def test_get_data_empty():
+    client = TestClient(app)
+    response = client.get("/get_data")
     assert response.status_code == 200
-    assert response.json() == {"message": "Query logged successfully"}
+    assert response.json() == []
 
-def test_invalid_submit_data():
+def test_get_stats_empty():
     client = TestClient(app)
-    data = {"invalid_key": "some_value"}
-    response = client.post("/submit_data", json=data)
-    assert response.status_code == 422
-
-def test_invalid_log_query():
-    client = TestClient(app)
-    query = {"query": ""}
-    response = client.post("/log_query", json=query)
-    assert response.status_code == 422
+    response = client.get("/get_stats")
+    assert response.status_code == 200
+    assert response.json() == []
