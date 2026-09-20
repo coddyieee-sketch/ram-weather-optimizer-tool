@@ -1,8 +1,7 @@
 import os
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 
 load_dotenv()
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
@@ -22,40 +21,26 @@ app.add_middleware(
 )
 
 DATA_STORE = []
-LOGS = []
 
-class Data(BaseModel):
-    key: str
-    value: str
-
-class Query(BaseModel):
-    query: str
-
-@app.post("/submit_data")
-async def submit_data(data: Data):
-    DATA_STORE.append(data.dict())
-    return {"message": "Data submitted successfully"}
-
-@app.get("/get_data")
+@app.get("/data")
 async def get_data():
     return DATA_STORE
 
-@app.get("/get_stats")
-async def get_stats():
-    return {"count": len(DATA_STORE)}
-
-@app.post("/log_query")
-async def log_query(query: Query):
-    LOGS.append(query.dict())
-    return {"message": "Query logged successfully"}
-
-@app.get("/get_logs")
-async def get_logs():
-    return LOGS
+@app.post("/data")
+async def post_data(data: dict):
+    DATA_STORE.append(data)
+    return {"message": "Data added successfully"}
 
 @app.post("/reset")
-async def reset():
-    global DATA_STORE, LOGS
+async def reset_data():
+    global DATA_STORE
     DATA_STORE = []
-    LOGS = []
-    return {"message": "Data and logs reset successfully"}
+    return {"message": "Data reset successfully"}
+
+@app.get("/stats")
+async def get_stats():
+    return {"data_count": len(DATA_STORE)}
+
+@app.get("/logs")
+async def get_logs():
+    return DATA_STORE

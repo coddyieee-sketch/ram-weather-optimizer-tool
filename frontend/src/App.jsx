@@ -1,95 +1,112 @@
 import React, { useState, useEffect } from 'react';
 import { FiSettings, FiMoon, FiSun } from 'lucide-react';
-import './App.css';
+import axios from 'axios';
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [weatherData, setWeatherData] = useState({});
   const [ramUsage, setRamUsage] = useState(0);
   const [systemLogs, setSystemLogs] = useState([]);
-  const [metrics, setMetrics] = useState({});
+  const [formInput, setFormInput] = useState({});
 
   useEffect(() => {
-    fetch('/api/weather')
-      .then(response => response.json())
-      .then(data => setWeatherData(data));
+    axios.get('http://localhost:8000/weather-data')
+      .then(response => {
+        setWeatherData(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
 
-    fetch('/api/ram-usage')
-      .then(response => response.json())
-      .then(data => setRamUsage(data));
+    axios.get('http://localhost:8000/ram-usage')
+      .then(response => {
+        setRamUsage(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
 
-    fetch('/api/system-logs')
-      .then(response => response.json())
-      .then(data => setSystemLogs(data));
-
-    fetch('/api/metrics')
-      .then(response => response.json())
-      .then(data => setMetrics(data));
+    axios.get('http://localhost:8000/system-logs')
+      .then(response => {
+        setSystemLogs(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
   }, []);
+
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    axios.post('http://localhost:8000/optimize-weather-app', formInput)
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
 
   const handleDarkModeToggle = () => {
     setDarkMode(!darkMode);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    fetch('/api/submit', {
-      method: 'POST',
-      body: formData,
-    })
-      .then(response => response.json())
-      .then(data => console.log(data));
-  };
-
   return (
-    <div className={`app ${darkMode ? 'dark' : ''}`}>
-      <header className="header">
-        <h1>RAM Weather Optimizer Tool</h1>
-        <button className="settings-button" onClick={handleDarkModeToggle}>
-          <FiSettings />
+    <div className={`h-screen w-screen ${darkMode ? 'bg-slate-900' : 'bg-white'}`}>
+      <header className="py-4 px-6 flex justify-between items-center">
+        <h1 className="text-2xl font-bold">RAM Weather Optimizer Tool</h1>
+        <button className="p-2 rounded-full hover:bg-slate-200" onClick={handleDarkModeToggle}>
+          {darkMode ? <FiSun size={24} /> : <FiMoon size={24} />}
         </button>
-        {darkMode ? (
-          <button className="dark-mode-button" onClick={handleDarkModeToggle}>
-            <FiSun />
-          </button>
-        ) : (
-          <button className="dark-mode-button" onClick={handleDarkModeToggle}>
-            <FiMoon />
-          </button>
-        )}
       </header>
-      <main className="main">
-        <section className="weather-section">
-          <h2>Weather Data</h2>
-          <p>Temperature: {weatherData.temperature}</p>
-          <p>Humidity: {weatherData.humidity}</p>
+      <main className="py-6 px-6">
+        <section className="mb-6">
+          <h2 className="text-xl font-bold mb-2">Weather Data</h2>
+          <div className="bg-white/10 rounded-lg p-4">
+            <p>Temperature: {weatherData.temperature}</p>
+            <p>Humidity: {weatherData.humidity}</p>
+            <p>Wind Speed: {weatherData.windSpeed}</p>
+          </div>
         </section>
-        <section className="ram-usage-section">
-          <h2>RAM Usage</h2>
-          <p>{ramUsage}%</p>
-          <progress className="ram-usage-progress" value={ramUsage} max="100" />
+        <section className="mb-6">
+          <h2 className="text-xl font-bold mb-2">RAM Usage</h2>
+          <div className="bg-white/10 rounded-lg p-4">
+            <p>RAM Usage: {ramUsage}%</p>
+            <div className="w-full h-4 bg-gray-200 rounded-full">
+              <div className={`h-4 bg-blue-500 rounded-full w-${ramUsage}`} />
+            </div>
+          </div>
         </section>
-        <section className="system-logs-section">
-          <h2>System Logs</h2>
-          <ul>
-            {systemLogs.map((log, index) => (
-              <li key={index}>{log}</li>
-            ))}
-          </ul>
+        <section className="mb-6">
+          <h2 className="text-xl font-bold mb-2">System Logs</h2>
+          <div className="bg-white/10 rounded-lg p-4">
+            <ul>
+              {systemLogs.map((log, index) => (
+                <li key={index}>{log}</li>
+              ))}
+            </ul>
+          </div>
         </section>
-        <section className="metrics-section">
-          <h2>Metrics</h2>
-          <p>CPU Usage: {metrics.cpuUsage}%</p>
-          <p>Memory Usage: {metrics.memoryUsage}%</p>
+        <section className="mb-6">
+          <h2 className="text-xl font-bold mb-2">Optimize Weather App</h2>
+          <form onSubmit={handleFormSubmit}>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2" htmlFor="input">Input:</label>
+              <input
+                type="text"
+                id="input"
+                className="block w-full p-2 pl-10 text-sm text-gray-700 border border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                value={formInput.input}
+                onChange={(event) => setFormInput({ ...formInput, input: event.target.value })}
+              />
+            </div>
+            <button
+              type="submit"
+              className="py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
+            >
+              Optimize
+            </button>
+          </form>
         </section>
-        <form onSubmit={handleSubmit}>
-          <label>
-            Submit Data:
-            <input type="text" name="data" />
-          </label>
-          <button type="submit">Submit</button>
-        </form>
       </main>
     </div>
   );
