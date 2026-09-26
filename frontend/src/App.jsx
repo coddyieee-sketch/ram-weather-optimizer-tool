@@ -71,9 +71,6 @@ function App() {
           <h2 className="text-xl font-bold mb-2">RAM Usage</h2>
           <div className="bg-white/10 rounded-lg p-4">
             <p>RAM Usage: {ramUsage}%</p>
-            <div className="w-full h-4 bg-gray-200 rounded-full">
-              <div className={`h-4 bg-blue-500 rounded-full w-${ramUsage}`} />
-            </div>
           </div>
         </section>
         <section className="mb-6">
@@ -94,17 +91,12 @@ function App() {
               <input
                 type="text"
                 id="input"
-                className="block w-full p-2 pl-10 text-sm text-gray-700 border border-gray-200 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                className="block w-full p-2 rounded-lg"
                 value={formInput.input}
                 onChange={(event) => setFormInput({ ...formInput, input: event.target.value })}
               />
             </div>
-            <button
-              type="submit"
-              className="py-2 px-4 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
-            >
-              Optimize
-            </button>
+            <button type="submit" className="p-2 rounded-lg bg-slate-200 hover:bg-slate-300">Optimize</button>
           </form>
         </section>
       </main>

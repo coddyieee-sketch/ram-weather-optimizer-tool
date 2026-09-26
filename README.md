@@ -8,7 +8,7 @@ The Windows 11 built-in Weather app has been known to waste more than 1 GB of RA
 * FastAPI backend to handle API requests and store data in-memory
 * React frontend to provide a user interface for interacting with the backend
 * CORS enabled to allow local communication between the frontend and backend
-* Automated testing using pytest to ensure the backend API endpoints are working correctly
+* Automated testing using pytest to ensure the correctness of the backend API
 
 ## API Contract Summary
 The backend API provides the following endpoints:
@@ -25,35 +25,31 @@ graph LR
     InMemoryDataStore -->|Stores data| Backend
     Backend -->|Returns response to| Frontend
     Frontend -->|Displays response to| User
-    User -->|Submits data to| Frontend
-    Frontend -->|Sends data to| Backend
-    Backend -->|Stores data in| InMemoryDataStore
-    InMemoryDataStore -->|Updates data| Backend
-    Backend -->|Returns updated data to| Frontend
-    Frontend -->|Displays updated data to| User
-    User -->|Resets data| Frontend
-    Frontend -->|Sends reset request to| Backend
-    Backend -->|Resets| InMemoryDataStore
-    InMemoryDataStore -->|Clears data| Backend
-    Backend -->|Returns reset response to| Frontend
-    Frontend -->|Displays reset response to| User
+    subgraph Backend
+        Backend -->|CORS enabled| Frontend
+    end
+    subgraph InMemoryDataStore
+        InMemoryDataStore -->|Stores data in-memory| Backend
+    end
+    subgraph Frontend
+        Frontend -->|Uses React| User
+    end
 ```
 
 ## Running the Project
 ### Backend
-1. Install required packages: `pip install -r requirements.txt`
+1. Install packages: `pip install -r requirements.txt`
 2. Start the backend: `uvicorn backend.app:app --reload --port 8000`
 
 ### Frontend
-1. Change into the frontend directory: `cd frontend`
-2. Install required packages: `npm install`
-3. Start the frontend: `npm run dev`
+1. Install packages: `cd frontend && npm install`
+2. Start the frontend: `cd frontend && npm run dev`
 
 ### CORS
-CORS (Cross-Origin Resource Sharing) is enabled to allow local communication between the frontend and backend. This allows the frontend to make requests to the backend API endpoints.
+CORS (Cross-Origin Resource Sharing) is enabled to allow local communication between the frontend and backend. This allows the frontend to send requests to the backend and receive responses, even though they are running on different ports.
 
 ## Badges
-[![Python Version](https://img.shields.io/badge/Python-3.9-blue)](https://www.python.org/downloads/release/python-390/)
-[![FastAPI Version](https://img.shields.io/badge/FastAPI-0.92.0-blue)](https://fastapi.tiangolo.com/)
-[![React Version](https://img.shields.io/badge/React-18.2.0-blue)](https://reactjs.org/)
-[![Vite Version](https://img.shields.io/badge/Vite-3.1.0-blue)](https://vitejs.dev/)
+[![Python version](https://img.shields.io/badge/Python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
+[![FastAPI version](https://img.shields.io/badge/FastAPI-0.92.0-blue.svg)](https://fastapi.tiangolo.com/)
+[![React version](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
+[![npm version](https://img.shields.io/badge/npm-8.19.2-blue.svg)](https://www.npmjs.com/)
