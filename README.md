@@ -1,55 +1,73 @@
 # ram-weather-optimizer-tool
 Optimize Windows 11 Weather app RAM usage with this FastAPI & React tool
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python: 3.9+](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![React: 18+](https://img.shields.io/badge/React-18+-blue.svg)](https://reactjs.org/)
+
 ## Executive Overview
-The Windows 11 built-in Weather app has been known to waste more than 1 GB of RAM. This project aims to provide a solution to optimize the RAM usage of the Weather app using a FastAPI backend and a React frontend.
+The ram-weather-optimizer-tool is a FastAPI and React application designed to optimize Windows 11 Weather app RAM usage. The tool provides a user-friendly interface to monitor and control the Weather app's RAM usage, helping to reduce memory waste and improve system performance.
 
 ## Feature Breakdown
-* FastAPI backend to handle API requests and store data in-memory
-* React frontend to provide a user interface for interacting with the backend
-* CORS enabled to allow local communication between the frontend and backend
-* Automated testing using pytest to ensure the correctness of the backend API
+* Monitor Weather app RAM usage in real-time
+* Control Weather app RAM usage with customizable settings
+* View system logs and metrics to identify performance bottlenecks
+* Interactive dashboard with customizable widgets and charts
 
 ## API Contract Summary
-The backend API provides the following endpoints:
-* `POST /reset`: Resets the in-memory data store
-* `POST /submit`: Submits data to the in-memory data store
-* `GET /data`: Retrieves data from the in-memory data store
+The FastAPI backend provides the following API endpoints:
+* `GET /ram-usage`: Retrieve current Weather app RAM usage
+* `POST /ram-usage`: Update Weather app RAM usage settings
+* `GET /system-logs`: Retrieve system logs
+* `GET /metrics`: Retrieve system metrics
+* `POST /reset`: Reset in-memory data store
 
 ## End-to-End System Architecture Flow Diagram
 ```mermaid
 graph LR
-    User -->|Interacts with| Frontend
-    Frontend -->|Sends request to| Backend
-    Backend -->|Processes request| InMemoryDataStore
-    InMemoryDataStore -->|Stores data| Backend
-    Backend -->|Returns response to| Frontend
-    Frontend -->|Displays response to| User
-    subgraph Backend
-        Backend -->|CORS enabled| Frontend
-    end
-    subgraph InMemoryDataStore
-        InMemoryDataStore -->|Stores data in-memory| Backend
-    end
-    subgraph Frontend
-        Frontend -->|Uses React| User
-    end
+    User -->|Interact with UI| Frontend
+    Frontend -->|Fetch RAM usage| FastAPI
+    FastAPI -->|Retrieve RAM usage| InMemoryDataStore
+    InMemoryDataStore -->|Return RAM usage| FastAPI
+    FastAPI -->|Return RAM usage| Frontend
+    Frontend -->|Display RAM usage| User
+    User -->|Update RAM usage settings| Frontend
+    Frontend -->|Update RAM usage settings| FastAPI
+    FastAPI -->|Update RAM usage settings| InMemoryDataStore
+    InMemoryDataStore -->|Update RAM usage settings| FastAPI
+    FastAPI -->|Return success| Frontend
+    Frontend -->|Display success| User
+    User -->|View system logs| Frontend
+    Frontend -->|Fetch system logs| FastAPI
+    FastAPI -->|Retrieve system logs| InMemoryDataStore
+    InMemoryDataStore -->|Return system logs| FastAPI
+    FastAPI -->|Return system logs| Frontend
+    Frontend -->|Display system logs| User
+    User -->|View metrics| Frontend
+    Frontend -->|Fetch metrics| FastAPI
+    FastAPI -->|Retrieve metrics| InMemoryDataStore
+    InMemoryDataStore -->|Return metrics| FastAPI
+    FastAPI -->|Return metrics| Frontend
+    Frontend -->|Display metrics| User
 ```
 
-## Running the Project
+## Running the Application
 ### Backend
-1. Install packages: `pip install -r requirements.txt`
+1. Install required packages: `pip install -r requirements.txt`
 2. Start the backend: `uvicorn backend.app:app --reload --port 8000`
 
 ### Frontend
-1. Install packages: `cd frontend && npm install`
-2. Start the frontend: `cd frontend && npm run dev`
+1. Change into the frontend directory: `cd frontend`
+2. Install required packages: `npm install`
+3. Start the frontend: `npm run dev`
 
 ### CORS
-CORS (Cross-Origin Resource Sharing) is enabled to allow local communication between the frontend and backend. This allows the frontend to send requests to the backend and receive responses, even though they are running on different ports.
+The FastAPI backend is configured to allow CORS requests from the React frontend. This allows the frontend to make requests to the backend despite being hosted on different domains.
 
-## Badges
-[![Python version](https://img.shields.io/badge/Python-3.9-blue.svg)](https://www.python.org/downloads/release/python-390/)
-[![FastAPI version](https://img.shields.io/badge/FastAPI-0.92.0-blue.svg)](https://fastapi.tiangolo.com/)
-[![React version](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
-[![npm version](https://img.shields.io/badge/npm-8.19.2-blue.svg)](https://www.npmjs.com/)
+## Step-by-Step Commands
+1. Install backend packages: `pip install -r requirements.txt`
+2. Start the backend: `uvicorn backend.app:app --reload --port 8000`
+3. Change into the frontend directory: `cd frontend`
+4. Install frontend packages: `npm install`
+5. Start the frontend: `npm run dev`
+6. Open a web browser and navigate to `http://localhost:5173` to access the application.
