@@ -3,60 +3,54 @@ from fastapi.testclient import TestClient
 from app import app
 
 @pytest.fixture(autouse=True)
-def reset_state():
+def reset_data():
     client = TestClient(app)
     client.post("/reset")
 
-def test_reset_data():
+def test_reset():
     client = TestClient(app)
     response = client.post("/reset")
     assert response.status_code == 200
-    assert response.json() == {"message": "Data reset successfully"}
+    assert response.json() == {"message": "Data store reset"}
 
-def test_submit_data():
+def test_submit():
     client = TestClient(app)
     data = {"key": "some_key", "value": "some_value"}
-    response = client.post("/submit_data", json=data)
+    response = client.post("/submit", json=data)
     assert response.status_code == 200
-    assert response.json() == {"message": "Data submitted successfully"}
+    assert response.json() == {"message": "Data submitted"}
 
-def test_get_data():
+def test_fetch():
     client = TestClient(app)
     data = {"key": "some_key", "value": "some_value"}
-    client.post("/submit_data", json=data)
-    response = client.get("/get_data")
+    client.post("/submit", json=data)
+    response = client.get("/fetch")
     assert response.status_code == 200
     assert response.json() == [data]
 
-def test_get_stats():
+def test_stats():
     client = TestClient(app)
-    response = client.get("/get_stats")
+    data = {"key": "some_key", "value": "some_value"}
+    client.post("/submit", json=data)
+    response = client.get("/stats")
     assert response.status_code == 200
-    assert response.json() == {"cache_hits": 0, "cache_misses": 0}
+    assert response.json() == {"count": 1}
 
-def test_log_query():
+def test_logs():
     client = TestClient(app)
-    query = {"query": "test query"}
-    response = client.post("/log_query", json=query)
+    data = {"key": "some_key", "value": "some_value"}
+    client.post("/submit", json=data)
+    response = client.get("/logs")
     assert response.status_code == 200
-    assert response.json() == {"message": "Query logged successfully"}
+    assert response.json() == [data]
 
-def test_get_query_logs():
+def test_invalid_submit():
     client = TestClient(app)
-    query = {"query": "test query"}
-    client.post("/log_query", json=query)
-    response = client.get("/get_query_logs")
-    assert response.status_code == 200
-    assert response.json() == ["test query"]
+    data = {"invalid_key": "some_value"}
+    response = client.post("/submit", json=data)
+    assert response.status_code == 422
 
-def test_get_data_empty():
+def test_empty_submit():
     client = TestClient(app)
-    response = client.get("/get_data")
-    assert response.status_code == 200
-    assert response.json() == []
-
-def test_get_stats_empty():
-    client = TestClient(app)
-    response = client.get("/get_stats")
-    assert response.status_code == 200
-    assert response.json() == {"cache_hits": 0, "cache_misses": 0}
+    response = client.post("/submit", json={})
+    assert response.status_code == 422

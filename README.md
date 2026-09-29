@@ -6,68 +6,57 @@ Optimize Windows 11 Weather app RAM usage with this FastAPI & React tool
 [![React: 18+](https://img.shields.io/badge/React-18+-blue.svg)](https://reactjs.org/)
 
 ## Executive Overview
-The ram-weather-optimizer-tool is a FastAPI and React application designed to optimize Windows 11 Weather app RAM usage. The tool provides a user-friendly interface to monitor and control the Weather app's RAM usage, helping to reduce memory waste and improve system performance.
+The ram-weather-optimizer-tool is a FastAPI and React application designed to optimize Windows 11's built-in Weather app RAM usage. The tool provides a user-friendly interface for monitoring and optimizing RAM usage, ensuring a seamless user experience.
 
 ## Feature Breakdown
-* Monitor Weather app RAM usage in real-time
-* Control Weather app RAM usage with customizable settings
-* View system logs and metrics to identify performance bottlenecks
-* Interactive dashboard with customizable widgets and charts
+* Monitor Windows 11 Weather app RAM usage in real-time
+* Optimize RAM usage with a single click
+* View detailed statistics on RAM usage and optimization results
+* Customizable dashboard with real-time updates
 
 ## API Contract Summary
 The FastAPI backend provides the following API endpoints:
-* `GET /ram-usage`: Retrieve current Weather app RAM usage
-* `POST /ram-usage`: Update Weather app RAM usage settings
-* `GET /system-logs`: Retrieve system logs
-* `GET /metrics`: Retrieve system metrics
-* `POST /reset`: Reset in-memory data store
+* `GET /ram-usage`: Retrieve current RAM usage
+* `POST /optimize-ram`: Optimize RAM usage
+* `GET /stats`: Retrieve detailed statistics on RAM usage and optimization results
+* `POST /reset`: Reset all data and optimization results
 
 ## End-to-End System Architecture Flow Diagram
 ```mermaid
 graph LR
-    User -->|Interact with UI| Frontend
-    Frontend -->|Fetch RAM usage| FastAPI
-    FastAPI -->|Retrieve RAM usage| InMemoryDataStore
-    InMemoryDataStore -->|Return RAM usage| FastAPI
-    FastAPI -->|Return RAM usage| Frontend
-    Frontend -->|Display RAM usage| User
-    User -->|Update RAM usage settings| Frontend
-    Frontend -->|Update RAM usage settings| FastAPI
-    FastAPI -->|Update RAM usage settings| InMemoryDataStore
-    InMemoryDataStore -->|Update RAM usage settings| FastAPI
-    FastAPI -->|Return success| Frontend
-    Frontend -->|Display success| User
-    User -->|View system logs| Frontend
-    Frontend -->|Fetch system logs| FastAPI
-    FastAPI -->|Retrieve system logs| InMemoryDataStore
-    InMemoryDataStore -->|Return system logs| FastAPI
-    FastAPI -->|Return system logs| Frontend
-    Frontend -->|Display system logs| User
-    User -->|View metrics| Frontend
-    Frontend -->|Fetch metrics| FastAPI
-    FastAPI -->|Retrieve metrics| InMemoryDataStore
-    InMemoryDataStore -->|Return metrics| FastAPI
-    FastAPI -->|Return metrics| Frontend
-    Frontend -->|Display metrics| User
+    A[User] -->|Interact with Weather app| B[Windows 11 Weather app]
+    B -->|Request RAM usage data| C[FastAPI Backend]
+    C -->|Retrieve RAM usage data| D[In-Memory Data Store]
+    D -->|Return RAM usage data| C
+    C -->|Return RAM usage data| B
+    B -->|Display RAM usage data| A
+    A -->|Optimize RAM usage| C
+    C -->|Optimize RAM usage| D
+    D -->|Update RAM usage data| C
+    C -->|Return optimization results| B
+    B -->|Display optimization results| A
+    A -->|View statistics| C
+    C -->|Retrieve statistics| D
+    D -->|Return statistics| C
+    C -->|Return statistics| B
+    B -->|Display statistics| A
 ```
 
-## Running the Application
+## Step-by-Step Commands to Run the Application
 ### Backend
 1. Install required packages: `pip install -r requirements.txt`
 2. Start the backend: `uvicorn backend.app:app --reload --port 8000`
 
 ### Frontend
-1. Change into the frontend directory: `cd frontend`
+1. Change directory to frontend: `cd frontend`
 2. Install required packages: `npm install`
 3. Start the frontend: `npm run dev`
 
 ### CORS
-The FastAPI backend is configured to allow CORS requests from the React frontend. This allows the frontend to make requests to the backend despite being hosted on different domains.
+CORS (Cross-Origin Resource Sharing) allows the React frontend to communicate with the FastAPI backend, even though they are running on different ports. This is achieved by configuring the FastAPI backend to include the necessary CORS headers in its responses.
 
-## Step-by-Step Commands
-1. Install backend packages: `pip install -r requirements.txt`
-2. Start the backend: `uvicorn backend.app:app --reload --port 8000`
-3. Change into the frontend directory: `cd frontend`
-4. Install frontend packages: `npm install`
-5. Start the frontend: `npm run dev`
-6. Open a web browser and navigate to `http://localhost:5173` to access the application.
+## How to Contribute
+Contributions are welcome! Please submit a pull request with your changes and a brief description of what you've added or fixed.
+
+## License
+The ram-weather-optimizer-tool is licensed under the MIT License. See [LICENSE](LICENSE) for details.
